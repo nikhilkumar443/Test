@@ -1,0 +1,65 @@
+package com.customer.rewards;
+
+import java.util.*;
+
+public class RewardPointCalculation {
+    public static void main(String[] args) {
+
+        //List of users with three months
+        List<Long> january_month_transaction_customer1 = Arrays.asList(Long.valueOf(100), Long.valueOf(80), 
+        Long.valueOf(40));
+        List<Long> febrauary_transaction_month_customer1 = Arrays.asList(Long.valueOf(90), Long.valueOf(70), 
+        Long.valueOf(30));
+        List<Long> march_transaction_month_customer1 = Arrays.asList(Long.valueOf(60), Long.valueOf(50), 
+        Long.valueOf(20));
+
+        Map<String, List<Long>> map_user = new HashMap<>();
+        map_customer1.put("January", january_month_transaction_customer1);
+        map_customer1.put("Febrauary", febrauary_transaction_month_customer1);
+        map_customer1.put("March", march_transaction_month_customer1);
+
+        Map<String, Map<String, List<Long>>> transactionOfUsers = new HashMap<>();
+        transactionOfUsers.put("user1", map_customer1);
+
+        //method call for each user's total reward point calculation for all given three months
+        Map<String, Long> result = execute(transactionOfUsers);
+   }
+
+    //Total reward point calculation for all three months
+    private static Map<String, Long> execute(
+            Map<String, Map<String, List<Long>>> transactionOfUsers) {
+        final Map<String, Long> map = new HashMap<>();
+        transactionOfUsers.forEach((user, transactionsOfMonths) -> {
+            map.put(user, calculateRewardForEachUser(transactionsOfMonths));
+        });
+        return map;
+    }
+    
+    //reward point calculation for each transaction
+    private static long rewardPoints(final long transactionAmt) {
+        if (transactionAmt >= 50 && transactionAmt <= 100) {
+            return transactionAmt - 50;
+        } else if (transactionAmt > 100) {
+            return (transactionAmt - 100) * 2 + 50;
+        } else {
+            return 0;
+        }
+    }
+
+    //Total reward point addition of each month transaction 
+    private static long totalRewardPoint(
+            final List<Long> collection_rewardPoints_eachTransaction) {
+        return collection_rewardPoints_eachTransaction.stream().mapToLong((transactionAmt) -> {
+                    return calculateRewardPoints(transactionAmt);
+                }).sum();
+    }
+    
+    //each user reward point for 3 months
+    private static long rewardForEachUser(
+            Map<String, List<Long>> transactionsOfMonths) {
+        long totalRewardForAllMonths = transactionsOfMonths.entrySet().stream().mapToLong((e) -> {
+                    return totalRewardPoint(e.getValue());
+                }).sum();
+        return totalRewardForAllMonths;
+    }
+}
